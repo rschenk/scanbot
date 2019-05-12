@@ -1,0 +1,19 @@
+{
+  "name": "scanbot",
+  "version": "0.0.1",
+  "description": "Reads output of mouse scanner and draws pictures",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryan Schenk",
+  "license": "ISC",
+  "dependencies": {
+    "@serialport/list": "^1.1.4",
+    "figlet": "^1.2.1",
+    "inquirer": "^6.3.1",
+    "paper-jsdom": "^0.12.0",
+    "serialport": "^7.1.4",
+    "strftime": "^0.10.0"
+  }
+}

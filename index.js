@@ -26,10 +26,10 @@ wstream.write(`# Date: ${now.toString()}\n`)
 wstream.write(`# ISO8601: ${now.toISOString()}\n`)
 
 const port = new SerialPort(serial_path, { baudRate: baud })
-const parser = new Readline()
-port.pipe(parser)
+const readline = new Readline()
+port.pipe(readline)
 
-parser.on('data', onData)
+readline.on('data', onData)
 
 console.log(`Listening on ${serial_path}`)
 

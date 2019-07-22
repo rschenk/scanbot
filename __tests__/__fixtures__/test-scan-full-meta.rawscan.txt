@@ -1,0 +1,25 @@
+---
+name: Test Scan with full metadata
+description: This is a test
+date: Mon Jun 24 2019 21:38:06 GMT-0400 (Eastern Daylight Time)
+iso8601: 2019-06-25T01:38:06.443Z
+scans:
+  - all positive values
+  - all negative values
+  - positive and negative values
+---
+BEGIN
+1mm 3mm
+2mm 4mm
+3mm 5mm
+END
+BEGIN
+10in -9in
+20in -6in
+30in -3in
+END
+BEGIN
+2mm -1mm
+4mm 0mm
+6mm 10mm
+END

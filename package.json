@@ -4,7 +4,11 @@
   "description": "Reads output of mouse scanner and draws pictures",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "jest"
+  },
+  "bin": {
+    "scanbot": "bin/scanbot"
   },
   "author": "Ryan Schenk",
   "license": "ISC",

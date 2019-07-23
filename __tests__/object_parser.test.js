@@ -1,5 +1,5 @@
 const path = require('path')
-const parser = require('../lib/json_parser')
+const parser = require('../lib/object_parser')
 
 test('.parse', () => {
   let test_file = path.normalize([

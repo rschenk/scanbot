@@ -2,11 +2,11 @@ const path = require('path')
 const parser = require('../lib/object_parser')
 
 test('.parse', () => {
-  let test_file = path.normalize([
-      __dirname, '__fixtures__', 'test-scan-full-meta.rawscan.txt'
-    ].join(path.sep))
+  const testFile = path.normalize([
+    __dirname, '__fixtures__', 'test-scan-full-meta.rawscan.txt'
+  ].join(path.sep))
 
-  return parser.parse(test_file).then(parsed => {
+  return parser.parse(testFile).then(parsed => {
     expect(parsed.name).toBe('Test Scan with full metadata')
     expect(parsed.description).toBe('This is a test')
     expect(parsed.date).toBe('Mon Jun 24 2019 21:38:06 GMT-0400 (Eastern Daylight Time)')
@@ -23,7 +23,7 @@ test('.parse', () => {
     expect(scan.min_z).toBe(0)
     expect(scan.max_z).toBe(2)
     expect(scan.points).toEqual([
-      [1, 0], 
+      [1, 0],
       [2, 1],
       [3, 2]
     ])
@@ -37,7 +37,7 @@ test('.parse', () => {
     expect(scan.min_z).toBe(0)
     expect(scan.max_z).toBe(6)
     expect(scan.points).toEqual([
-      [10, 0], 
+      [10, 0],
       [20, 3],
       [30, 6]
     ])
@@ -51,7 +51,7 @@ test('.parse', () => {
     expect(scan.min_z).toBe(0)
     expect(scan.max_z).toBe(11)
     expect(scan.points).toEqual([
-      [2, 0], 
+      [2, 0],
       [4, 1],
       [6, 11]
     ])

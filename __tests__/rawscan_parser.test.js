@@ -1,5 +1,5 @@
 const path = require('path')
-const parser = require('../lib/rawscan_parser')
+const parser = require('../src/rawscan_parser')
 
 test('.parse', () => {
   const testFile = path.normalize([

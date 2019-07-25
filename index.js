@@ -1,1 +1,1 @@
-require('./lib/cli')
+require('./src/cli')

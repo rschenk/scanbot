@@ -1,3 +1,10 @@
+/*
+ * Scanbot by Ryan Schenk 2018
+ *
+ * The code to read the digital indicator came from:
+ *   https://web.archive.org/web/20181118142706/http://wei48221.blogspot.com:80/2016/01/using-digital-caliper-for-digital-read_21.html
+ *
+ */
 #include <JC_Button.h>  // https://github.com/JChristensen/JC_Button
 
 #define DEBUG false
@@ -8,13 +15,16 @@
 #define BUTTON_PIN 9
 #define LED_PIN 10
 
-// Note that our circuit to raise the indicator gauge's signal voltage also inverts
-// the logic levels. So when the clock is HIGH, our arduino reads that as LOW, etc.
+// Note that our circuit to raise the indicator gauge's signal voltage also
+// inverts the logic levels. So when the clock is HIGH, our arduino reads that
+// as LOW, etc.
 #define INDICATOR_CLOCK_HIGH LOW
 #define INDICATOR_CLOCK_LOW HIGH
 
 // Magic numbers for reading the Harbor Frieght indicator
-#define INDICATOR_NEW_SEQUENCE_THRESHOLD 650 // If a pulse is longer than this (micros), that signifies we are at the start of a new sequence
+// If a pulse is longer than this (micros), that signifies we are at the start
+// of a new sequence.
+#define INDICATOR_NEW_SEQUENCE_THRESHOLD 650
 
 #define INDICATOR_MM_SCALING_FACTOR 100.0
 #define INDICATOR_INCH_SCALING_FACTOR 2000.0
@@ -33,8 +43,12 @@ ToggleButton btn(
 
 boolean recording = false;
 
-unsigned long time_now;   // For storing the time when the clock signal is changed from HIGH to LOW (falling edge trigger of data output).
-unsigned long sequence;   // For storing the sequence coming out of the gauge
+// For storing the time when the clock signal is changed from HIGH to LOW
+// (falling edge trigger of data output).
+unsigned long time_now;
+
+// For storing the sequence coming out of the gauge
+unsigned long sequence;
 
 volatile boolean interrupt_tripped = false;
 volatile unsigned long opto_clicks = 0;
@@ -59,22 +73,29 @@ void setup() {
 }
 
 void loop() {
+  // put your main code here, to run repeatedly:
   btn.read();
   handle_button_state_change();
 
   digitalWrite(LED_PIN, recording);
   if(!recording) return;
   
-  // put your main code here, to run repeatedly:
-  while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_LOW) {} //if clock is LOW, wait until it turns to HIGH
-    
+  // If clock is LOW, wait until it turns to HIGH
+  while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_LOW) {}
+
   time_now = micros();
 
-  while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_HIGH) {} //wait for the end of the HIGH pulse
+  // Wait for the end of the HIGH pulse
+  while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_HIGH) {}
   
-  if ( (micros() - time_now) > INDICATOR_NEW_SEQUENCE_THRESHOLD) {  //if the HIGH pulse was longer than our threshold, we are at the start of a new bit sequence
+  // If the HIGH pulse was longer than our threshold, we are at the start of a
+  // new bit sequence
+  if ( (micros() - time_now) > INDICATOR_NEW_SEQUENCE_THRESHOLD) {
     digitalWrite(LED_PIN, LOW);
-    decodeIndicatorPacket();    // sets global sequence variable rather than returning. I dunno, seems to be how microcontroller programs are done
+
+    // Sets global sequence variable as a side-effect, rather than returning. I
+    // dunno, seems to be how microcontroller programs are done?
+    decodeIndicatorPacket();
 
     if(interrupt_tripped) {
       print_measurements();
@@ -104,9 +125,13 @@ void decodeIndicatorPacket() {
   while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_HIGH) {};
 
   for (i = 0; i <= 23; i++) {
-    while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_LOW) { } // Wait until clock returns to LOW
+    // Wait until clock returns to LOW
+    while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_LOW) { }
+
     bitWrite(sequence, i, !digitalRead(INDICATOR_DATA_PIN));
-    while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_HIGH) {} // Wait until clock returns to HIGH
+
+    // Wait until clock returns to HIGH
+    while (digitalRead(INDICATOR_CLOCK_PIN) == INDICATOR_CLOCK_HIGH) {}
   }
 
   if (DEBUG) {

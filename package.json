@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@serialport/list": "^1.1.4",
+    "chalk": "^2.4.2",
     "figlet": "^1.2.1",
     "inquirer": "^6.3.1",
     "inquirer-fuzzy-path": "^2.0.3",

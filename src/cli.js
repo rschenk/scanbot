@@ -1,5 +1,6 @@
 const inquirer = require('inquirer')
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'))
+const chalk = require('chalk')
 const figlet = require('figlet')
 const ora = require('ora')
 const strftime = require('strftime')
@@ -14,6 +15,8 @@ const ObjectParser = require('./object_parser')
 const Renderer = require('./renderer')
 
 const scansDir = '../scans'
+
+let ignoredScans = []
 
 run()
 
@@ -73,6 +76,7 @@ async function scan () {
 
           let spinner
           let scanCount = 0
+          ignoredScans = []
 
           reader.on('beginScan', () => {
             spinner = ora(`Scan ${++scanCount}`).start()
@@ -86,13 +90,20 @@ async function scan () {
               console.log('Done!')
               resolve(filepath)
             }
+
+            if (key.name === 'x') {
+              ignoredScans.push(scanCount - 1)
+              console.log(`${chalk.red('✗')} Marked Scan ${scanCount} to be ignored`)
+            }
           })
 
           console.log(`Listening on ${config['port']}...`)
           console.log(`Ready to scan "${config['name']}"`)
           console.log(`  to ${relativeFilepath}`)
-          console.log('')
-          console.log(`Hit q <Enter> when done scanning`)
+          console.log(``)
+          console.log(`Commands:`)
+          console.log(`  q <Enter> when done scanning`)
+          console.log(`  x <Enter> to ignore the previous scan`)
         })
       })
   )
@@ -192,10 +203,22 @@ async function postProcess (filepath) {
   console.log(`\n\nYou scanned ${numScans} scans. Name them:`)
 
   const questions = new Array(numScans).fill(null).map((_, i) => {
+    const message = `Scan ${i + 1} of ${numScans}`
+    const name = `scan_${i}`
+    const ignored = ignoredScans.includes(i)
+
     return ({
       type: 'input',
-      name: `scan_${i}`,
-      message: `Scan ${i + 1} of ${numScans}`
+      name,
+      message,
+      when: (answers) => {
+        if (ignored) {
+          console.log(`${chalk.green('!')} ${chalk.bold(message)} was marked as ignored`)
+          answers[name] = 'IGNORE'
+          return false
+        }
+        return true
+      }
     })
   })
   const answers = await inquirer.prompt(questions)

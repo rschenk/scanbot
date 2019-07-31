@@ -6,6 +6,7 @@ iso8601: 2019-06-25T01:38:06.443Z
 scans:
   - all positive values
   - all negative values
+  - IGNORE
   - positive and negative values
 ---
 BEGIN
@@ -17,6 +18,9 @@ BEGIN
 10in -9in
 20in -6in
 30in -3in
+END
+BEGIN
+2mm 1mm
 END
 BEGIN
 2mm -1mm

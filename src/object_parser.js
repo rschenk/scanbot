@@ -6,6 +6,7 @@ const readline = require('readline')
 function parse (filename) {
   let rawMetadata = ''
   const scans = []
+  let numScansRead = 0
   let readingFrontMatter = false
   let currentScan
   let metadata
@@ -30,12 +31,14 @@ function parse (filename) {
       }
 
       if (line.startsWith('BEGIN')) {
-        currentScan = initScan(scans.length, metadata)
+        currentScan = initScan(numScansRead++, scans.length, metadata)
         return
       }
 
       if (line.startsWith('END')) {
-        scans.push(processScan(currentScan))
+        if (currentScan.name !== 'IGNORE') {
+          scans.push(processScan(currentScan))
+        }
         return
       }
 
@@ -56,12 +59,12 @@ function parse (filename) {
   return promise
 }
 
-function initScan (scanIndex, metadata) {
-  const scanName = metadata['scans'] && metadata['scans'][scanIndex]
+function initScan (scanFileIndex, savedScansCount, metadata) {
+  const scanName = metadata['scans'] && metadata['scans'][scanFileIndex]
 
   return {
     name: scanName,
-    number: scanIndex + 1,
+    number: savedScansCount + 1,
     units: null,
     width: null,
     height: null,

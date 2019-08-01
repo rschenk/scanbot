@@ -1,6 +1,7 @@
 ---
 name: Test Scan with full metadata
 description: This is a test
+mirror: no
 date: Mon Jun 24 2019 21:38:06 GMT-0400 (Eastern Daylight Time)
 iso8601: 2019-06-25T01:38:06.443Z
 scans:

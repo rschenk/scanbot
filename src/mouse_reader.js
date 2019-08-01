@@ -5,7 +5,7 @@ const Readline = require('@serialport/parser-readline')
 const YAML = require('yaml')
 
 module.exports = class Reader extends EventEmitter {
-  constructor (serialPath, outputPath, name, description) {
+  constructor (serialPath, outputPath, name, description, mirror) {
     super()
 
     this.baud = 115200
@@ -17,15 +17,16 @@ module.exports = class Reader extends EventEmitter {
     this.readline.on('data', this.onData.bind(this))
 
     this.fileStream = fs.createWriteStream(outputPath)
-    this.writeFileHeader(name, description)
+    this.writeFileHeader(name, description, mirror)
     this.fileStream.on('close', () => this.emit('close'))
   }
 
-  writeFileHeader (name, description) {
+  writeFileHeader (name, description, mirror) {
     const now = new Date()
     const metadata = {
       name,
       description,
+      mirror,
       date: now.toString(),
       iso8601: now.toISOString()
     }

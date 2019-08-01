@@ -11,6 +11,7 @@ test('.parse', () => {
     expect(parsed.description).toBe('This is a test')
     expect(parsed.date).toBe('Mon Jun 24 2019 21:38:06 GMT-0400 (Eastern Daylight Time)')
     expect(parsed.iso8601).toBe('2019-06-25T01:38:06.443Z')
+    expect(parsed.mirror).toBe('no')
 
     expect(parsed.scans.length).toBe(3)
 

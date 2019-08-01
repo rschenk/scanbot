@@ -22,6 +22,11 @@ const scanStyle = {
   strokeColor: 'black'
 }
 
+const mirrorStyle = {
+  strokeWidth: 1,
+  strokeColor: '#999'
+}
+
 const textStyle = {
   fontFamily: 'Avenir Next',
   strokeWidth: 0,
@@ -31,8 +36,12 @@ const textStyle = {
 function render (scan, yScaleFactor = 1) {
   const padding = inch(0.5)
   const totalHeight = scan.scans.map(s => scale(s.height, s.units) * yScaleFactor).reduce((t, c) => t + c, 0)
-  const maxWidth = Math.max(...scan.scans.map(s => scale(s.width, s.units)))
+  let maxWidth = Math.max(...scan.scans.map(s => scale(s.width, s.units)))
   let cumulativeHeight = 0
+
+  const mirror = scan.mirror !== 'no' && scan.mirror
+
+  if (mirror) maxWidth *= 2
 
   paper.setup(new paper.Size(
     maxWidth + 2 * padding,
@@ -59,14 +68,25 @@ function render (scan, yScaleFactor = 1) {
 
     const path = new paper.Path(s.points.map(([x, z]) => [scale(x, s.units), scale(z, s.units) * -yScaleFactor]))
     path.style = scanStyle
-    path.bounds.topCenter = [
-      paper.project.view.center.x,
-      cumulativeHeight
-    ]
+
+    const position = [paper.project.view.center.x, cumulativeHeight]
+
+    if (mirror === 'end') {
+      const mirroredPath = horizontalMirror(path)
+      path.bounds.topRight = position
+      mirroredPath.bounds.topLeft = position
+    } else if (mirror === 'start') {
+      const mirroredPath = horizontalMirror(path)
+      path.bounds.topLeft = position
+      mirroredPath.bounds.topRight = position
+    } else {
+      path.bounds.topCenter = position
+    }
 
     const metadata = new paper.PointText([paper.project.view.center.x, cumulativeHeight - 5])
+    const width = mirror ? 2 * s.width : s.width
     metadata.style = { ...textStyle, justification: 'center' }
-    metadata.content = `${s.name} (${format(s.width, s.units)}x${format(s.height, s.units)}${s.units})`
+    metadata.content = `${s.name} (${format(width, s.units)}x${format(s.height, s.units)}${s.units})`
 
     cumulativeHeight += path.bounds.height + padding
   })
@@ -103,6 +123,14 @@ function drawRuler () {
   cmLabel.content = 'cm'
 
   return new paper.Group(inchLabel, inchScale, cmLabel, cmScale)
+}
+
+function horizontalMirror(path) {
+  const mirroredPath = path.clone()
+  mirroredPath.scale(-1, 1)
+  mirroredPath.style = mirrorStyle
+
+  return mirroredPath
 }
 
 exports.render = render

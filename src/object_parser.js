@@ -49,6 +49,7 @@ function parse (filename) {
       resolve({
         name: metadata.name,
         description: metadata.description,
+        mirror: metadata.mirror,
         date: metadata.date,
         iso8601: metadata.iso8601,
         scans: scans

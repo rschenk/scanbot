@@ -71,7 +71,8 @@ async function scan () {
             config['port'],
             filepath,
             config['name'],
-            config['description']
+            config['description'],
+            config['mirror']
           )
 
           let spinner
@@ -104,6 +105,7 @@ async function scan () {
           console.log(`Commands:`)
           console.log(`  q <Enter> when done scanning`)
           console.log(`  x <Enter> to ignore the previous scan`)
+          console.log(``)
         })
       })
   )
@@ -158,6 +160,16 @@ async function getScanConfig () {
       type: 'input',
       message: 'Description:',
       default: ''
+    },
+    {
+      name: 'mirror',
+      type: 'list',
+      message: 'Duplicate and mirror the render? (Useful for scanning half surfboards)',
+      choices: [
+        { value: 'no', name: 'No' },
+        { value: 'end', name: 'End - Last point recorded will be the reflection point', short: 'End' },
+        { value: 'start', name: 'Start - First point recorded will be the reflection point', short: 'Start' }
+      ]
     }
   ]
   return inquirer.prompt(questions)
